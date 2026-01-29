@@ -18,7 +18,7 @@ def get_spark_session(app_name = SPARK_APP_NAME):
         SparkSession object
     """
 
-    spark = SparkSession.builder.appname(app_name).master(SPARK_MASTER).getOrCreate()
+    spark = SparkSession.builder.appName(app_name).master(SPARK_MASTER).getOrCreate()
 
     spark.sparkContext.setLogLevel(LOG_LEVEL)
     return spark
@@ -64,4 +64,3 @@ def get_version():
                     version_info[key] = value
             return version_info
     return {}
-

@@ -37,3 +37,31 @@ def download_dataset(url, output_path):
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     
+    if os.path.exists(output_path):
+        print(f"File already exists at {output_path}. \nSkipping download.")
+        return output_path
+    
+    print(f"Downloading dataset from {url} ")
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        with open(output_path, 'wb') as f:
+            f.write(response.content)
+        print(f"Dataset downloaded and saved to {output_path}")
+        return output_path
+    else:
+        raise Exception(f"Failed to download dataset from {url}. Status code: {response.status_code}")
+    
+def get_version():
+    """Read and return version information"""
+    version_file = "VERSION"
+    if os.path.exists(version_file):
+        with open(version_file, 'r') as f:
+            version_info = {}
+            for line in f:
+                if '=' in line:
+                    key, value = line.strip().split('=', 1)
+                    version_info[key] = value
+            return version_info
+    return {}
+

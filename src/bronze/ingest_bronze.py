@@ -3,18 +3,17 @@ Bronze Layer: Ingest raw data from sources.
 Loads raw data into the bronze layer without any/minimal transformations.
 """
 
-from pyspark.sql import SparkSession
 from pyspark.sql.functions import current_timestamp, input_file_name
 import os
 
-def process_bronze(spark, input_path, output_path):
+def process_bronze(spark, source_path, bronze_path):
     """
     Process Bronze Layer: Ingest raw data into bronze layer
 
     Args:
         spark: SparkSession object
-        input_path: Path to the raw data source
-        output_path: Path to save the bronze layer data
+        source_path: Path to the raw data source
+        bronze_path: Path to save the bronze layer data
 
     Returns:
         DataFrame: Ingested bronze layer DataFrame
@@ -25,8 +24,8 @@ def process_bronze(spark, input_path, output_path):
     print("\n" + "="*50 + "\n")
 
     # Read raw data
-    print(f"Reading raw data from {input_path}")
-    df = spark.read.option("header", "true").option("inferSchema", "true").csv(input_path)
+    print(f"Reading raw data from {source_path}")
+    df = spark.read.option("header", "true").option("inferSchema", "true").csv(source_path)
 
     # Add metadata columns
     df_bronze = df \
@@ -39,12 +38,12 @@ def process_bronze(spark, input_path, output_path):
     print(f"Total records ingested: {df_bronze.count()}")
 
     # Save to bronze layer
-    output_path = os.path.join(output_path, "retail_data")
+    bronze_path = os.path.join(bronze_path, "retail_data")
     df_bronze.write \
         .mode("overwrite") \
-        .parquet(output_path)
+        .parquet(bronze_path)
     
-    print(f"\nBronze layer data saved to {output_path}")
+    print(f"\nBronze layer data saved to {bronze_path}")
 
     return df_bronze
 
